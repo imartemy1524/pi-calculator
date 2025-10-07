@@ -15,7 +15,7 @@ app = Celery('tasks', broker=os.getenv('CELERY_BROKER_URL'), backend=os.getenv('
 
 class PiCalculator:
     """
-    Compute π (pi) to n decimal places using the Chudnovsky algorithm.
+    Compute pi to n decimal places using the Chudnovsky algorithm.
     Tracks progress during computation.
     """
 
@@ -24,7 +24,7 @@ class PiCalculator:
             raise ValueError("n must be non-negative")
         self.n = n
         self.update_state = update_state
-        self._progress = 0.0  # percentage (0.0 - 100.0)
+        self._progress = 0.0
         self.pi_value = None
         self.time_started = time.time()
 
@@ -47,7 +47,7 @@ class PiCalculator:
                    (Decimal(640320) ** (3 * k)))
             term = (Decimal(-1) ** k) * num / den
             S += term
-            # code works too fast – lets fix it
+            # code works too fast – lets fix it
             time.sleep(random()*0.03)
             self.progress = (k + 1) / terms
 

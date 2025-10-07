@@ -1,5 +1,3 @@
-from decimal import Decimal
-
 from celery.result import AsyncResult
 from tasks import calculate_pi_with_things, app as celery_app
 from flask import Flask, request, jsonify
@@ -34,7 +32,6 @@ def calculate_pi():
     if n is None:
         return jsonify({"error": "Please provide n as integer"}), 400
     task = calculate_pi_with_things.delay(n)
-    print(task.id)
     return {"id": str(task.id)}
 
 
@@ -70,7 +67,6 @@ def check_progress(task_id):
               description: The result of the task (the calculated value of Pi) or an error message/object.
     """
     result = AsyncResult(task_id, app=celery_app)
-    print(result.info)
     if result.state == 'PENDING':
         # job did not start yet
         response = {
@@ -82,7 +78,7 @@ def check_progress(task_id):
         response = {
             'state': "FINISHED",
             'progress': 1,
-            'result': (result.result["result"])  # this is the return value of the task
+            'result': (result.result["result"])
         }
     elif result.state != 'FAILURE':
         response = result.info
@@ -94,7 +90,7 @@ def check_progress(task_id):
         response = {
             'state': "UNKNOWN",
             'progress': result.info.get('progress', 0),
-            'result': (result.info),  # this is the exception raised
+            'result': (result.info),
         }
     return response
 
